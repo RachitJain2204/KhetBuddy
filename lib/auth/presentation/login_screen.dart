@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../app_routes.dart';
+import '../controller/auth_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,6 +14,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordHidden = true;
 
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -19,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: const Color.fromARGB(255, 220, 220, 220),
       body: Column(
         children: [
-          // 🔹 Top Green Section
+          // 🔹 Top Section
           Container(
             height: screenHeight * 0.37,
             width: double.infinity,
@@ -88,25 +94,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 30),
 
-                  // 🔹 Email Field
+                  // EMAIL
                   Text(
                     'EMAIL',
                     style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(150, 56, 132, 60)
-                    ),
+                        color: Color.fromARGB(150, 56, 132, 60)),
                   ),
                   const SizedBox(height: 6),
                   TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       hintText: 'Your Email',
                       hintStyle: GoogleFonts.poppins(
-                          color: Color.fromARGB(150, 56, 132, 60)
-                      ),
+                          color: Color.fromARGB(150, 56, 132, 60)),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                      contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -116,16 +121,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 18),
 
-                  // 🔹 Password Field
+                  // PASSWORD
                   Text(
                     'PASSWORD',
                     style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(150, 56, 132, 60)
-                    ),
+                        color: Color.fromARGB(150, 56, 132, 60)),
                   ),
                   const SizedBox(height: 6),
                   TextField(
+                    controller: _passwordController,
                     obscureText: _isPasswordHidden,
                     decoration: InputDecoration(
                       hintText: 'Your password',
@@ -155,18 +160,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
-
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {
-                        // TODO: Navigate to Forgot Password Screen
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size(0, 30),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
+                      onPressed: () {},
                       child: Text(
                         'Forgot Password?',
                         style: GoogleFonts.poppins(
@@ -180,44 +177,91 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 30),
 
-
-                  // 🔹 Sign In Button
+                  // LOGIN BUTTON
                   SizedBox(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 56, 132, 60),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        'Sign In',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
+                    child: Consumer<AuthController>(
+                      builder: (context, authController, _) {
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                            const Color.fromARGB(255, 56, 132, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: authController.isLoading
+                              ? null
+                              : () async {
+                            final username =
+                            _emailController.text.trim();
+                            final password =
+                            _passwordController.text.trim();
+
+                            if (username.isEmpty || password.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                    Text("Please fill all fields")),
+                              );
+                              return;
+                            }
+
+                            final success = await authController.login(
+                                username, password);
+
+                            if (success) {
+                              Navigator.pushReplacementNamed(
+                                  context, AppRoutes.homepage);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(authController
+                                        .errorMessage ??
+                                        "Login failed")),
+                              );
+                            }
+                          },
+                          child: authController.isLoading
+                              ? const CircularProgressIndicator(
+                              color: Colors.white)
+                              : Text(
+                            'Sign In',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
 
                   const Spacer(),
 
-                  // 🔹 Bottom Text
                   Center(
                     child: Text.rich(
                       TextSpan(
-                        text: "Don't have an account? ",
+                        text: "Already have an account? ",
                         style: GoogleFonts.poppins(color: Colors.black54),
                         children: [
-                          TextSpan(
-                            text: 'Sign Up',
-                            style: GoogleFonts.poppins(
-                              color: const Color(0xFF2E7D32),
-                              fontWeight: FontWeight.w600,
+                          WidgetSpan(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRoutes.signup,
+                                );
+                              },
+                              child: Text(
+                                'Sign Up',
+                                style: GoogleFonts.poppins(
+                                  color: const Color(0xFF2E7D32),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
                         ],

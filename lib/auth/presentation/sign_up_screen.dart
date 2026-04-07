@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../app_routes.dart';
+import '../controller/auth_controller.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -11,15 +14,21 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _isPasswordHidden = true;
 
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+  TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 220, 220, 220),
       body: Column(
         children: [
-          // 🔹 Top Green Section
+          // 🔹 Top Section
           Container(
             height: screenHeight * 0.37,
             width: double.infinity,
@@ -88,25 +97,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                   const SizedBox(height: 30),
 
-                  // 🔹 Email Field
+                  // EMAIL
                   Text(
                     'EMAIL',
                     style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(150, 56, 132, 60)
-                    ),
+                        color: Color.fromARGB(150, 56, 132, 60)),
                   ),
                   const SizedBox(height: 6),
                   TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       hintText: 'Your Email',
                       hintStyle: GoogleFonts.poppins(
-                          color: Color.fromARGB(150, 56, 132, 60)
-                      ),
+                          color: Color.fromARGB(150, 56, 132, 60)),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                      contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -116,16 +124,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                   const SizedBox(height: 18),
 
-                  // 🔹 Password Field
+                  // PASSWORD
                   Text(
                     'PASSWORD',
                     style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(150, 56, 132, 60)
-                    ),
+                        color: Color.fromARGB(150, 56, 132, 60)),
                   ),
                   const SizedBox(height: 6),
                   TextField(
+                    controller: _passwordController,
                     obscureText: _isPasswordHidden,
                     decoration: InputDecoration(
                       hintText: 'Create a Password',
@@ -155,19 +163,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 18,
-                  ),
+                  const SizedBox(height: 18),
 
+                  // CONFIRM PASSWORD
                   Text(
                     'CONFIRM PASSWORD',
                     style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Color.fromARGB(150, 56, 132, 60)
-                    ),
+                        color: Color.fromARGB(150, 56, 132, 60)),
                   ),
                   const SizedBox(height: 6),
                   TextField(
+                    controller: _confirmPasswordController,
                     obscureText: _isPasswordHidden,
                     decoration: InputDecoration(
                       hintText: 'Repeat Your Password',
@@ -182,60 +189,111 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
                       ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isPasswordHidden
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordHidden = !_isPasswordHidden;
-                          });
-                        },
-                      ),
                     ),
                   ),
 
                   const SizedBox(height: 30),
 
-                  // 🔹 Sign In Button
+                  // SIGN UP BUTTON
                   SizedBox(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 56, 132, 60),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        'Sign Up',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
+                    child: Consumer<AuthController>(
+                      builder: (context, authController, _) {
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                            const Color.fromARGB(255, 56, 132, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: authController.isLoading
+                              ? null
+                              : () async {
+                            final username =
+                            _emailController.text.trim();
+                            final password =
+                            _passwordController.text.trim();
+                            final confirmPassword =
+                            _confirmPasswordController.text.trim();
+
+                            if (username.isEmpty ||
+                                password.isEmpty ||
+                                confirmPassword.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                    Text("Please fill all fields")),
+                              );
+                              return;
+                            }
+
+                            if (password != confirmPassword) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        "Passwords do not match")),
+                              );
+                              return;
+                            }
+
+                            final success =
+                            await authController.signUp(
+                                username, password);
+
+                            if (success) {
+                              Navigator.pushReplacementNamed(
+                                  context, AppRoutes.homepage);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(authController
+                                        .errorMessage ??
+                                        "Signup failed")),
+                              );
+                            }
+                          },
+                          child: authController.isLoading
+                              ? const CircularProgressIndicator(
+                              color: Colors.white)
+                              : Text(
+                            'Sign Up',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
 
                   const Spacer(),
 
-                  // 🔹 Bottom Text
+                  // BOTTOM TEXT
                   Center(
                     child: Text.rich(
                       TextSpan(
-                        text: "Don't have an account? ",
+                        text: "Already have an account? ",
                         style: GoogleFonts.poppins(color: Colors.black54),
                         children: [
-                          TextSpan(
-                            text: 'Sign In',
-                            style: GoogleFonts.poppins(
-                              color: const Color(0xFF2E7D32),
-                              fontWeight: FontWeight.w600,
+                          WidgetSpan(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRoutes.login,
+                                );
+                              },
+                              child: Text(
+                                'Sign In',
+                                style: GoogleFonts.poppins(
+                                  color: const Color(0xFF2E7D32),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
                         ],
