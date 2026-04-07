@@ -4,6 +4,7 @@ import 'package:khet_buddy/profile/controller/profile_controller.dart';
 import 'package:provider/provider.dart';
 import 'app_routes.dart';
 import 'auth/controller/auth_controller.dart';
+import 'farm/controller/farm_controller.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthController()),
         ChangeNotifierProvider(create: (_) => ProfileController()),
+        ChangeNotifierProvider(create: (_) => FarmController()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

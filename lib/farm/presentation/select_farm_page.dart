@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
+import '../controller/farm_controller.dart';
+import '../model/farm_model.dart';
 import '../widgets/add_new_farm_card.dart';
 import '../widgets/farm_card.dart';
 
@@ -11,34 +14,23 @@ class SelectFarmPage extends StatefulWidget {
 }
 
 class _SelectFarmPageState extends State<SelectFarmPage> {
-  int selectedIndex = 0;
+  int? selectedIndex;
 
-  final List<Map<String, dynamic>> farms = [
-    {
-      "name": "Rice",
-      "land": "32 hectares",
-      "irrigation": "Drip",
-      "ph": "6.6",
-      "location": "23.951, 26.096"
-    },
-    {
-      "name": "Corn",
-      "land": "10 hectares",
-      "irrigation": "Sprinkler",
-      "ph": "7.9",
-      "location": "22.662, 26.464"
-    },
-    {
-      "name": "Barley",
-      "land": "50 hectares",
-      "irrigation": "Canal",
-      "ph": "7.6",
-      "location": "22.399, 25.460"
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    // 🔄 Fetch farms on load
+    Future.microtask(() {
+      context.read<FarmController>().fetchFarms();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<FarmController>();
+    final farms = controller.farms;
+
     return Scaffold(
       backgroundColor: AppColors.offwhite,
       body: SafeArea(
@@ -100,19 +92,35 @@ class _SelectFarmPageState extends State<SelectFarmPage> {
 
               const SizedBox(height: 12),
 
-              // Farm List
+              // 🔄 Farm List
               Expanded(
-                child: ListView.builder(
-                  itemCount: farms.length + 1,
+                child: controller.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                  itemCount:
+                  farms.isEmpty ? 1 : farms.length + 1,
                   itemBuilder: (context, index) {
+                    // 👉 If no farms → show only Add button
+                    if (farms.isEmpty) {
+                      return const AddFarmCard();
+                    }
+
+                    // 👉 Last item = Add Farm
                     if (index == farms.length) {
                       return const AddFarmCard();
                     }
 
-                    final farm = farms[index];
+                    final FarmModel farm = farms[index];
 
                     return FarmCard(
-                      farm: farm,
+                      farm: {
+                        "name": farm.crop,
+                        "land": "${farm.totalLand} hectares",
+                        "irrigation": farm.irrigationType,
+                        "ph": farm.phLevel.toString(),
+                        "location":
+                        "${farm.latitude}, ${farm.longitude}",
+                      },
                       isSelected: selectedIndex == index,
                       onTap: () {
                         setState(() {
@@ -129,7 +137,13 @@ class _SelectFarmPageState extends State<SelectFarmPage> {
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: selectedIndex == null
+                      ? null
+                      : () {
+                    final selectedFarm =
+                    farms[selectedIndex!];
+                    print(selectedFarm.id);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.mainGreen,
                     shape: RoundedRectangleBorder(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:provider/provider.dart';
+import '../../app_routes.dart';
 import '../../constants/colors.dart';
+import '../controller/farm_controller.dart';
 class AddFarmPage extends StatefulWidget {
   const AddFarmPage({super.key});
 
@@ -175,6 +177,9 @@ class _AddFarmPageState extends State<AddFarmPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final controller = context.watch<FarmController>();
+
     return Scaffold(
       backgroundColor: AppColors.bgcolor,
       appBar: AppBar(
@@ -245,14 +250,48 @@ class _AddFarmPageState extends State<AddFarmPage> {
         child: SizedBox(
           height: 52,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: controller.isLoading
+                ? null
+                : () async {
+              final cropString = selectedCrops.join(',');
+
+              final success = await context.read<FarmController>().addFarm(
+                totalLand: double.tryParse(landController.text) ?? 0,
+                irrigationType: selectedIrrigation,
+                phLevel: phController.text,
+                crop: cropString,
+                latitude: double.tryParse(latitude) ?? 0,
+                longitude: double.tryParse(longitude) ?? 0,
+              );
+
+              if (success) {
+                await context.read<FarmController>().fetchFarms();
+
+                Navigator.pushReplacementNamed(
+                  context,
+                  AppRoutes.selectFram,
+                );
+              }
+              else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      context.read<FarmController>().error ??
+                          "Something went wrong",
+                    ),
+                  ),
+                );
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.darkgreen,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            child: const Text(
+            child: controller.isLoading
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text(
               "Save Farm",
               style: TextStyle(color: AppColors.white),
             ),
