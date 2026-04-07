@@ -1,6 +1,7 @@
 import 'dart:ui' as BorderType;
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import '../../app_routes.dart';
 import '../../constants/colors.dart';
 
 class AddFarmCard extends StatelessWidget {
@@ -10,7 +11,8 @@ class AddFarmCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to Add Farm Screen
+        Navigator.pushReplacementNamed(
+            context, AppRoutes.addFarm);
       },
       child: DottedBorder(
         options: RoundedRectDottedBorderOptions(

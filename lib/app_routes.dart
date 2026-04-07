@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khet_buddy/farm/presentation/add_farm_page.dart';
 import 'package:khet_buddy/farm/presentation/select_farm_page.dart';
 import 'package:khet_buddy/profile/create_profile.dart';
 import 'auth/presentation/login_screen.dart';
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String homepage = '/homepage';
   static const String createProfile = '/createProfile';
   static const String selectFram = '/selectFarmPage';
+  static const String addFarm = '/addFarmPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -51,6 +53,11 @@ class AppRoutes {
       case selectFram:
         return MaterialPageRoute(
           builder: (_) => const SelectFarmPage(),
+        );
+
+      case addFarm:
+        return MaterialPageRoute(
+          builder: (_) => const AddFarmPage(),
         );
 
       default:

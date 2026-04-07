@@ -214,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             if (success) {
                               Navigator.pushReplacementNamed(
-                                  context, AppRoutes.selectFram);
+                                  context, AppRoutes.createProfile);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
