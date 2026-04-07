@@ -212,7 +212,7 @@ class _CreateProfileState extends State<CreateProfile> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pushReplacementNamed(
-                        context, AppRoutes.homepage);
+                        context, AppRoutes.selectFram);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.mainGreen,
