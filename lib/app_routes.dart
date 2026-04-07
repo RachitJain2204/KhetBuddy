@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:khet_buddy/farm/presentation/add_farm_page.dart';
 import 'package:khet_buddy/farm/presentation/select_farm_page.dart';
-import 'package:khet_buddy/profile/create_profile.dart';
+import 'package:khet_buddy/profile/presentation/create_profile.dart';
 import 'auth/presentation/login_screen.dart';
 import 'auth/presentation/sign_up_screen.dart';
 import '../splash/splash_screen.dart';

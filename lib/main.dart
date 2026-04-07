@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:khet_buddy/profile/controller/profile_controller.dart';
 import 'package:provider/provider.dart';
 import 'app_routes.dart';
 import 'auth/controller/auth_controller.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthController()),
+        ChangeNotifierProvider(create: (_) => ProfileController()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

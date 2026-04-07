@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import '../app_routes.dart';
-import '../constants/colors.dart';
+import 'package:provider/provider.dart';
+import '../../app_routes.dart';
+import '../../constants/colors.dart';
+import '../controller/profile_controller.dart';
+import '../widgets/custom_text_field.dart';
 
 class CreateProfile extends StatefulWidget {
   const CreateProfile({super.key});
@@ -13,6 +16,9 @@ class CreateProfile extends StatefulWidget {
 
 class _CreateProfileState extends State<CreateProfile> {
 
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   File? _image;
   final ImagePicker _picker = ImagePicker();
 
@@ -73,6 +79,9 @@ class _CreateProfileState extends State<CreateProfile> {
 
   @override
   Widget build(BuildContext context) {
+
+    final controller = Provider.of<ProfileController>(context);
+
     return Scaffold(
       backgroundColor: AppColors.offwhite,
       body: SafeArea(
@@ -178,11 +187,12 @@ class _CreateProfileState extends State<CreateProfile> {
 
               // First + Last Name
               Row(
-                children: const [
+                children: [
                   Expanded(
                     child: CustomTextField(
                       label: "FIRST NAME",
                       hint: "Rachit",
+                      controller: firstNameController,
                     ),
                   ),
                   SizedBox(width: 12),
@@ -190,6 +200,7 @@ class _CreateProfileState extends State<CreateProfile> {
                     child: CustomTextField(
                       label: "LAST NAME",
                       hint: "Jain",
+                      controller: lastNameController,
                     ),
                   ),
                 ],
@@ -198,9 +209,10 @@ class _CreateProfileState extends State<CreateProfile> {
               const SizedBox(height: 16),
 
               // Phone
-              const CustomTextField(
+              CustomTextField(
                 label: "PHONE NUMBER",
                 hint: "+91 123 456 7890",
+                controller: phoneController,
               ),
 
               const Spacer(),
@@ -210,9 +222,23 @@ class _CreateProfileState extends State<CreateProfile> {
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(
-                        context, AppRoutes.selectFram);
+                  onPressed: () async {
+                    final success = await controller.updateProfile(
+                      firstName: firstNameController.text.trim(),
+                      lastName: lastNameController.text.trim(),
+                      phone: phoneController.text.trim(),
+                      image: _image,
+                    );
+
+                    if (success) {
+                      Navigator.pushReplacementNamed(context, AppRoutes.selectFram);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(controller.error ?? "Something went wrong"),
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.mainGreen,
@@ -235,55 +261,6 @@ class _CreateProfileState extends State<CreateProfile> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class CustomTextField extends StatelessWidget {
-  final String label;
-  final String hint;
-
-  const CustomTextField({
-    super.key,
-    required this.label,
-    required this.hint,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textBlack,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: AppColors.hintText,
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
