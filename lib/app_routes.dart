@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:khet_buddy/profile/create_profile.dart';
 import 'auth/presentation/login_screen.dart';
 import 'auth/presentation/sign_up_screen.dart';
 import '../splash/splash_screen.dart';
@@ -11,6 +11,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String homepage = '/homepage';
+  static const String createProfile = '/createProfile';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -22,7 +23,7 @@ class AppRoutes {
 
       case auth:
         return MaterialPageRoute(
-          builder: (_) => const SignUpScreen(), // temporary (we’ll improve later)
+          builder: (_) => const LoginScreen(),
         );
 
       case login:
@@ -38,6 +39,11 @@ class AppRoutes {
       case homepage:
         return MaterialPageRoute(
           builder: (_) => const HomeScreen(),
+        );
+
+      case createProfile:
+        return MaterialPageRoute(
+          builder: (_) => const CreateProfile(),
         );
 
       default:

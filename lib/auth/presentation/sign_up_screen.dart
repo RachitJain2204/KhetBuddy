@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../app_routes.dart';
+import '../../constants/colors.dart';
 import '../controller/auth_controller.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 220, 220, 220),
+      backgroundColor: AppColors.offwhite,
       body: Column(
         children: [
           // 🔹 Top Section
@@ -244,7 +245,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                             if (success) {
                               Navigator.pushReplacementNamed(
-                                  context, AppRoutes.homepage);
+                                  context, AppRoutes.createProfile);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:khet_buddy/constants/colors.dart';
 import 'package:provider/provider.dart';
 import '../../app_routes.dart';
 import '../controller/auth_controller.dart';
@@ -22,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 220, 220, 220),
+      backgroundColor: AppColors.offwhite,
       body: Column(
         children: [
           // 🔹 Top Section
