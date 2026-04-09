@@ -16,6 +16,7 @@ class AppRoutes {
   static const String createProfile = '/createProfile';
   static const String selectFram = '/selectFarmPage';
   static const String addFarm = '/addFarmPage';
+  static const String dashboard = '/dashboardPage';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -42,7 +43,7 @@ class AppRoutes {
 
       case homepage:
         return MaterialPageRoute(
-          builder: (_) => const HomeScreen(),
+          builder: (_) => const HomePage(),
         );
 
       case createProfile:
@@ -56,6 +57,11 @@ class AppRoutes {
         );
 
       case addFarm:
+        return MaterialPageRoute(
+          builder: (_) => const AddFarmPage(),
+        );
+
+      case dashboard:
         return MaterialPageRoute(
           builder: (_) => const AddFarmPage(),
         );

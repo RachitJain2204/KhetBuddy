@@ -29,4 +29,26 @@ class AppColors {
   // FAB inactive
   static const Color fabInactive = Color(0xFFF9F9F9);
   static const Color fabStroke = Color(0xFFE5E7EA);
+
+  // Nutrient colors
+  static const Color nitrogenGreen = Color(0xFF4CAF50);
+  static const Color nitrogenBg = Color(0xFFEEFBF0);
+  static const Color phosphorusOrange = Color(0xFFE65100);
+  static const Color phosphorusBg = Color(0xFFFFF3EE);
+  static const Color potassiumPurple = Color(0xFF7B1FA2);
+  static const Color potassiumBg = Color(0xFFF9F0FC);
+
+  // Yield forecast
+  static const Color yieldMin = Color(0xFFE53935);
+  static const Color yieldMinBg = Color(0xFFFFF0F0);
+  static const Color yieldAvg = Color(0xFFE5A800);
+  static const Color yieldAvgBg = Color(0xFFFFFBEC);
+  static const Color yieldMax = Color(0xFF2E7D32);
+  static const Color yieldMaxBg = Color(0xFFEDF7EE);
+
+  // Weather
+  static const Color weatherBlue = Color(0xFF2196F3);
+  static const Color weatherBlueBg = Color(0xFFEEF6FF);
+  static const Color weatherAlertBg = Color(0xFFE8F4FD);
+  static const Color weatherAlertText = Color(0xFF1565C0);
 }
