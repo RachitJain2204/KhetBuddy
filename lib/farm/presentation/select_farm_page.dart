@@ -137,9 +137,10 @@ class _SelectFarmPageState extends State<SelectFarmPage> {
                       : () async {
                     final selectedFarm = farms[selectedIndex!];
 
-                    // ✅ SAVE FARM ID
                     final prefs = await SharedPreferences.getInstance();
-                    final int? farmId = prefs.getInt('selected_farm_id');
+
+                    // ✅ SAVE FARM ID
+                    await prefs.setInt('selected_farm_id', selectedFarm.id);
 
                     // ✅ NAVIGATE
                     Navigator.pushReplacementNamed(
