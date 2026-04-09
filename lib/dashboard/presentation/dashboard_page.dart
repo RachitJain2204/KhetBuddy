@@ -142,7 +142,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 return WeatherCard(
                   temperature: w.avgTemperature,
                   humidity: w.humidity.toInt(),
-                  rainfall: w.rainfallToday,
                   windSpeed: w.windSpeed,
                   alertMessage: w.advisory,
                 );

@@ -87,16 +87,16 @@ class WeatherCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Expanded(
-                  child: _WeatherStat(
-                    icon: Icons.grain_rounded,
-                    iconColor: AppColors.weatherBlue,
-                    iconBg: AppColors.weatherBlueBg,
-                    value: '${rainfall}mm',
-                    label: 'Rainfall',
-                  ),
-                ),
-                const SizedBox(width: 8),
+                // Expanded(
+                //   child: _WeatherStat(
+                //     icon: Icons.grain_rounded,
+                //     iconColor: AppColors.weatherBlue,
+                //     iconBg: AppColors.weatherBlueBg,
+                //     value: '${rainfall}mm',
+                //     label: 'Rainfall',
+                //   ),
+                // ),
+                // const SizedBox(width: 8),
                 Expanded(
                   child: _WeatherStat(
                     icon: Icons.air_rounded,
