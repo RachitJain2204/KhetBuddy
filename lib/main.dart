@@ -4,6 +4,7 @@ import 'package:khet_buddy/profile/controller/profile_controller.dart';
 import 'package:provider/provider.dart';
 import 'app_routes.dart';
 import 'auth/controller/auth_controller.dart';
+import 'dashboard/controller/weather_controller.dart';
 import 'farm/controller/farm_controller.dart';
 
 void main() {
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthController()),
         ChangeNotifierProvider(create: (_) => ProfileController()),
         ChangeNotifierProvider(create: (_) => FarmController()),
+        ChangeNotifierProvider(create: (_) => WeatherController()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

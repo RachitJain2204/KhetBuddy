@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
+import '../controller/weather_controller.dart';
 import '../widgets/farm_dashboard_header.dart';
 import '../widgets/soil_analysis_card.dart';
 import '../widgets/weather_card.dart';
@@ -8,7 +10,7 @@ import '../widgets/yield_forecast_card.dart';
 
 /// The main dashboard screen.
 /// Compose all card widgets here — easy to reorder, add, or remove sections.
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   final farmId;
   const DashboardPage({
     super.key,
@@ -16,14 +18,29 @@ class DashboardPage extends StatelessWidget {
   });
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      context.read<WeatherController>().fetchWeather();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgcolor,
       body: SingleChildScrollView(
         child: Column(
-          children: const [
+          children: [
             // ── 1. Green header with farm info ──────────────────────────
-            FarmDashboardHeader(
+            const FarmDashboardHeader(
               userName: 'Ravi',
               location: 'New Delhi, Delhi',
               season: 'Rabi (Spring)',
@@ -32,10 +49,10 @@ class DashboardPage extends StatelessWidget {
               irrigation: 'Drip',
             ),
 
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
 
             // ── 2. Soil Analysis ─────────────────────────────────────────
-            SoilAnalysisCard(
+            const SoilAnalysisCard(
               nitrogen: 281,
               phosphorus: 23,
               potassium: 213,
@@ -44,7 +61,7 @@ class DashboardPage extends StatelessWidget {
             ),
 
             // ── 3. Yield Forecast + Historical Chart ─────────────────────
-            YieldForecastCard(
+            const YieldForecastCard(
               cropName: 'Wheat',
               minYield: 10.5,
               avgYield: 17.5,
@@ -60,17 +77,30 @@ class DashboardPage extends StatelessWidget {
             ),
 
             // ── 4. Today's Weather ───────────────────────────────────────
-            WeatherCard(
-              temperature: 26,
-              humidity: 75,
-              rainfall: 6.9,
-              windSpeed: 11,
-              alertMessage:
-              'Moderate rainfall expected. Delay fertilizer application by 1-2 days.',
+            Consumer<WeatherController>(
+              builder: (context, controller, child) {
+                if (controller.isLoading) {
+                  return const CircularProgressIndicator();
+                }
+
+                if (controller.weather == null) {
+                  return const Text("No weather data");
+                }
+
+                final w = controller.weather!;
+
+                return WeatherCard(
+                  temperature: w.avgTemperature,
+                  humidity: w.humidity.toInt(),
+                  rainfall: w.rainfallToday,
+                  windSpeed: w.windSpeed,
+                  alertMessage: w.advisory,
+                );
+              },
             ),
 
             // Bottom padding so content clears the nav bar
-            SizedBox(height: 100),
+            const SizedBox(height: 100),
           ],
         ),
       ),
