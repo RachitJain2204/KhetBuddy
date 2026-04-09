@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
+import '../../farm/controller/farm_controller.dart';
+import '../controller/farmer_controller.dart';
 import '../controller/weather_controller.dart';
+import '../controller/yield_controller.dart';
 import '../widgets/farm_dashboard_header.dart';
 import '../widgets/soil_analysis_card.dart';
 import '../widgets/weather_card.dart';
 import '../widgets/yield_forecast_card.dart';
 
-
 /// The main dashboard screen.
-/// Compose all card widgets here — easy to reorder, add, or remove sections.
 class DashboardPage extends StatefulWidget {
-  final farmId;
+  final int farmId;
+
   const DashboardPage({
     super.key,
-    required this.farmId
+    required this.farmId,
   });
 
   @override
@@ -22,13 +24,15 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-
   @override
   void initState() {
     super.initState();
 
     Future.microtask(() {
       context.read<WeatherController>().fetchWeather();
+      context.read<YieldController>().fetchYield(widget.farmId);
+      context.read<FarmerController>().fetchFarmer();
+      context.read<FarmController>().fetchFarms();
     });
   }
 
@@ -39,44 +43,90 @@ class _DashboardPageState extends State<DashboardPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ── 1. Green header with farm info ──────────────────────────
-            const FarmDashboardHeader(
-              userName: 'Ravi',
-              location: 'New Delhi, Delhi',
-              season: 'Rabi (Spring)',
-              crop: 'Wheat',
-              area: '5 acres',
-              irrigation: 'Drip',
+            /// ───────── HEADER (Farmer + Yield) ─────────
+            Consumer3<FarmerController, YieldController, FarmController>(
+              builder: (context, farmerCtrl, yieldCtrl, farmCtrl, child) {
+
+                if (farmerCtrl.isLoading ||
+                    yieldCtrl.isLoading ||
+                    farmCtrl.isLoading) {
+                  return const Padding(
+                    padding: EdgeInsets.all(30),
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                final farmer = farmerCtrl.farmer;
+                final yieldData = yieldCtrl.yieldData;
+                final farm = farmCtrl.getFarmById(widget.farmId);
+
+                if (farmer == null || yieldData == null || farm == null) {
+                  return const Text("No data available");
+                }
+
+                return FarmDashboardHeader(
+                  userName: farmer.firstName,
+                  location:
+                  "${yieldData.location.district}, ${yieldData.location.state}",
+                  season: yieldData.season,
+
+                  // 🔥 IMPORTANT CHANGES
+                  crop: farm.crop, // from farm API (better than yield API)
+                  area: "${farm.totalLand} acres", // ✅ dynamic
+                  irrigation: farm.irrigationType, // ✅ dynamic
+                );
+              },
             ),
 
             const SizedBox(height: 4),
 
-            // ── 2. Soil Analysis ─────────────────────────────────────────
-            const SoilAnalysisCard(
-              nitrogen: 281,
-              phosphorus: 23,
-              potassium: 213,
-              moisture: 52,
-              soilPh: 6.8,
+            /// ───────── SOIL ANALYSIS ─────────
+            Consumer<YieldController>(
+              builder: (context, controller, child) {
+                if (controller.isLoading) {
+                  return const CircularProgressIndicator();
+                }
+
+                if (controller.yieldData == null) {
+                  return const Text("No soil data");
+                }
+
+                final soil = controller.yieldData!.soil;
+
+                return SoilAnalysisCard(
+                  nitrogen: soil.nitrogen,
+                  phosphorus: soil.phosphorus,
+                  potassium: soil.potassium,
+                  moisture: soil.moisture,
+                  soilPh: soil.soilPh,
+                );
+              },
             ),
 
-            // ── 3. Yield Forecast + Historical Chart ─────────────────────
-            const YieldForecastCard(
-              cropName: 'Wheat',
-              minYield: 10.5,
-              avgYield: 17.5,
-              maxYield: 23.63,
-              historicalData: [
-                YieldDataPoint(year: '\'22', value: 16.7),
-                YieldDataPoint(year: '\'23', value: 16.8),
-                YieldDataPoint(year: '\'24', value: 19.9, isHighlighted: true),
-                YieldDataPoint(year: '\'25', value: 16.9),
-                YieldDataPoint(year: '\'26', value: 16.5),
-                YieldDataPoint(year: 'Max', value: 23.6, isMaxPotential: true),
-              ],
+            /// ───────── YIELD FORECAST ─────────
+            Consumer<YieldController>(
+              builder: (context, controller, child) {
+                if (controller.isLoading) {
+                  return const CircularProgressIndicator();
+                }
+
+                if (controller.yieldData == null) {
+                  return const Text("No yield data");
+                }
+
+                final y = controller.yieldData!;
+
+                return YieldForecastCard(
+                  cropName: y.cropType,
+                  minYield: y.yieldPerHectare.lower,
+                  avgYield: y.yieldPerHectare.expected,
+                  maxYield: y.yieldPerHectare.higher,
+                  historicalData: const [], // optional
+                );
+              },
             ),
 
-            // ── 4. Today's Weather ───────────────────────────────────────
+            /// ───────── WEATHER ─────────
             Consumer<WeatherController>(
               builder: (context, controller, child) {
                 if (controller.isLoading) {
@@ -99,7 +149,6 @@ class _DashboardPageState extends State<DashboardPage> {
               },
             ),
 
-            // Bottom padding so content clears the nav bar
             const SizedBox(height: 100),
           ],
         ),

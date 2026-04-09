@@ -121,42 +121,6 @@ class YieldForecastCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Gradient slider bar
-            Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                Container(
-                  height: 6,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.yieldMin, AppColors.yieldAvg, AppColors.yieldMax],
-                    ),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-                // Thumb at ~35% position (avg on the scale)
-                FractionallySizedBox(
-                  widthFactor: 0.35,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      width: 18,
-                      height: 18,
-                      decoration: BoxDecoration(
-                        color: AppColors.yieldAvg,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 4),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
             // Disclaimer box
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -262,7 +226,22 @@ class _YieldBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxVal = data.map((d) => d.value).reduce((a, b) => a > b ? a : b);
+    // ✅ FIX 1: Handle empty list
+    if (data.isEmpty) {
+      return const SizedBox(
+        height: 120,
+        child: Center(
+          child: Text(
+            "No historical data available",
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    // ✅ FIX 2: Safe max calculation
+    final maxVal =
+    data.map((d) => d.value).reduce((a, b) => a > b ? a : b);
 
     return SizedBox(
       height: 120,
@@ -270,6 +249,7 @@ class _YieldBarChart extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: data.map((point) {
           Color barColor;
+
           if (point.isMaxPotential) {
             barColor = AppColors.yieldAvg;
           } else if (point.isHighlighted) {
@@ -289,24 +269,36 @@ class _YieldBarChart extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: point.isMaxPotential ? AppColors.yieldAvg : AppColors.textBlack,
+                      color: point.isMaxPotential
+                          ? AppColors.yieldAvg
+                          : AppColors.textBlack,
                     ),
                   ),
                   const SizedBox(height: 4),
+
+                  // ✅ FIX 3: Avoid divide-by-zero
                   Container(
-                    height: 80 * (point.value / maxVal),
+                    height: maxVal == 0
+                        ? 0
+                        : 80 * (point.value / maxVal),
                     decoration: BoxDecoration(
                       color: barColor,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                      borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(4)),
                     ),
                   ),
+
                   const SizedBox(height: 6),
                   Text(
                     point.year,
                     style: TextStyle(
                       fontSize: 11,
-                      color: point.isMaxPotential ? AppColors.yieldAvg : AppColors.hintText,
-                      fontWeight: point.isMaxPotential ? FontWeight.w600 : FontWeight.w400,
+                      color: point.isMaxPotential
+                          ? AppColors.yieldAvg
+                          : AppColors.hintText,
+                      fontWeight: point.isMaxPotential
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                     ),
                   ),
                 ],

@@ -60,4 +60,12 @@ class FarmController extends ChangeNotifier {
       return false;
     }
   }
+
+  FarmModel? getFarmById(int id) {
+    try {
+      return farms.firstWhere((farm) => farm.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
 }
