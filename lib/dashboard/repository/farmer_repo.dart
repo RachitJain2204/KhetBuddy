@@ -6,7 +6,7 @@ class FarmerRepository {
 
   Future<Farmer> getFarmerDetails() async {
     try {
-      final response = await _apiService.get('/farmer/details');
+      final response = await _apiService.get('/api/farmer/details');
 
       return Farmer.fromJson(response.data);
     } catch (e) {
