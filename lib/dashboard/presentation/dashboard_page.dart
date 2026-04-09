@@ -9,7 +9,11 @@ import '../widgets/yield_forecast_card.dart';
 /// The main dashboard screen.
 /// Compose all card widgets here — easy to reorder, add, or remove sections.
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final farmId;
+  const DashboardPage({
+    super.key,
+    required this.farmId
+  });
 
   @override
   Widget build(BuildContext context) {

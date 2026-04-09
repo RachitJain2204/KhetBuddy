@@ -9,7 +9,13 @@ import '../widgets/schedule_summer_banner.dart';
 import '../widgets/today_irrigation_card.dart';
 
 class IrrigationPage extends StatefulWidget {
-  const IrrigationPage({super.key});
+
+  final farmID;
+
+  const IrrigationPage({
+    super.key,
+    required this.farmID,
+  });
 
   @override
   State<IrrigationPage> createState() => _IrrigationPageState();

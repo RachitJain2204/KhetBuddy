@@ -7,8 +7,13 @@ import '../irrigation/presentation/irrigation_page.dart';
 
 class HomePage extends StatefulWidget {
   final int initialIndex;
+  final String farmId;
 
-  const HomePage({super.key, this.initialIndex = 0});
+  const HomePage({
+    super.key,
+    this.initialIndex = 0,
+    required this.farmId,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,13 +27,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _selectedIndex = widget.initialIndex;
   }
-
-  final List<Widget> _pages = [
-    const DashboardPage(),
-    const IrrigationPage(),
-    const FertilizerPage(),
-    const CreateProfile(),
-  ];
 
   final List<NavItemData> _navItems = [
     NavItemData(icon: Icons.home, label: 'Dashboard'),
@@ -45,6 +43,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final List<Widget> _pages = [
+      DashboardPage(farmId: widget.farmId,), // ✅ pass farmId
+      IrrigationPage(farmID: widget.farmId,), // optional: can pass later
+      FertilizerPage(),
+      const CreateProfile(),
+    ];
+
     return Scaffold(
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),

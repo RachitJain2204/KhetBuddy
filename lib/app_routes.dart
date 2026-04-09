@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khet_buddy/dashboard/presentation/dashboard_page.dart';
 import 'package:khet_buddy/farm/presentation/add_farm_page.dart';
 import 'package:khet_buddy/farm/presentation/select_farm_page.dart';
 import 'package:khet_buddy/profile/presentation/create_profile.dart';
@@ -41,11 +42,6 @@ class AppRoutes {
           builder: (_) => const SignUpScreen(),
         );
 
-      case homepage:
-        return MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        );
-
       case createProfile:
         return MaterialPageRoute(
           builder: (_) => const CreateProfile(),
@@ -62,8 +58,10 @@ class AppRoutes {
         );
 
       case dashboard:
+        final farmId = settings.arguments as String; // or int
+
         return MaterialPageRoute(
-          builder: (_) => const AddFarmPage(),
+          builder: (_) => HomePage(farmId: farmId),
         );
 
       default:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../app_routes.dart';
 import '../../constants/colors.dart';
 import '../controller/farm_controller.dart';
 import '../model/farm_model.dart';
@@ -137,13 +138,17 @@ class _SelectFarmPageState extends State<SelectFarmPage> {
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: selectedIndex == null
-                      ? null
-                      : () {
-                    final selectedFarm =
-                    farms[selectedIndex!];
-                    print(selectedFarm.id);
-                  },
+                    onPressed: selectedIndex == null
+                        ? null
+                        : () {
+                      final selectedFarm = farms[selectedIndex!];
+
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.dashboard,
+                        arguments: selectedFarm.id, // 👈 passing farmId
+                      );
+                    },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.mainGreen,
                     shape: RoundedRectangleBorder(
