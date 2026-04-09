@@ -51,4 +51,18 @@ class AppColors {
   static const Color weatherBlueBg = Color(0xFFEEF6FF);
   static const Color weatherAlertBg = Color(0xFFE8F4FD);
   static const Color weatherAlertText = Color(0xFF1565C0);
+
+  static const Color irrigationPrimary     = Color(0xFF1565C0); // deep blue — header, banner, filled buttons
+  static const Color irrigationMid         = Color(0xFF1976D2); // slightly lighter blue — gradients
+  static const Color irrigationAccent      = Color(0xFF42A5F5); // light blue — icons on dark bg
+  static const Color irrigateBadgeBg       = Color(0xFFE3F2FD); // pale blue — "Irrigate" chip bg
+  static const Color irrigateBadgeText     = Color(0xFF1565C0); // deep blue — "Irrigate" chip text
+  static const Color irrigateBadgeBorder   = Color(0xFF90CAF9); // chip border
+  static const Color skipBg                = Color(0xFFF0F0F0); // grey — "Skip" chip bg
+  static const Color skipText              = Color(0xFF8A9099); // grey — "Skip" chip text
+  static const Color inputBg               = Color(0xFFF2F5FA); // blue-tinted input background
+  static const Color inputBorder           = Color(0xFFDDE3F0); // blue-tinted border
+  static const Color infoBannerBg          = Color(0xFFE3F2FD); // info note background
+  static const Color infoBannerText        = Color(0xFF1A237E); // info note text
+  static const Color todayStatBg           = Color(0xFFEBF4FE); // stat tile background
 }

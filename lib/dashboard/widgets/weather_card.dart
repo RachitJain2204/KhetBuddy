@@ -90,8 +90,8 @@ class WeatherCard extends StatelessWidget {
                 Expanded(
                   child: _WeatherStat(
                     icon: Icons.grain_rounded,
-                    iconColor: const Color(0xFF546E7A),
-                    iconBg: const Color(0xFFECEFF1),
+                    iconColor: AppColors.weatherBlue,
+                    iconBg: AppColors.weatherBlueBg,
                     value: '${rainfall}mm',
                     label: 'Rainfall',
                   ),
