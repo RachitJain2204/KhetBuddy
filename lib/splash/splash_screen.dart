@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // ✅ ADDED
 import '../app_routes.dart';
 import '../constants/colors.dart';
 import '../services/api_service.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -149,21 +149,28 @@ class _SplashScreenState extends State<SplashScreen>
     await _checkAuthAndNavigate();
   }
 
+  // ✅ UPDATED LOGIC
   Future<void> _checkAuthAndNavigate() async {
     if (!mounted) return;
 
-    // Check if user is already logged in
     final apiService = ApiService();
     final token = await apiService.getToken();
 
-    await Future.delayed(const Duration(milliseconds: 200));
+    final prefs = await SharedPreferences.getInstance();
+    final int? farmId = prefs.getInt('selected_farm_id');
 
-    if (!mounted) return;
-
-    if (token != null &&
-        token.isNotEmpty ) {
+    if (token != null && token.isNotEmpty) {
       await apiService.loadToken();
-      Navigator.of(context).pushReplacementNamed(AppRoutes.homepage);
+
+      if (farmId != null) {
+        Navigator.of(context).pushReplacementNamed(
+          AppRoutes.dashboard,
+          arguments: farmId,
+        );
+      } else {
+        Navigator.of(context)
+            .pushReplacementNamed(AppRoutes.selectFram);
+      }
     } else {
       Navigator.of(context).pushReplacementNamed(AppRoutes.auth);
     }
@@ -187,7 +194,6 @@ class _SplashScreenState extends State<SplashScreen>
     final safeAreaTop = MediaQuery.of(context).padding.top;
     final safeAreaBottom = MediaQuery.of(context).padding.bottom;
 
-    // Use a percentage-based approach that respects safe areas
     final availableHeight = size.height - safeAreaTop - safeAreaBottom;
     final targetTopPosition = safeAreaTop + (availableHeight * 0.15);
 
@@ -255,7 +261,8 @@ class _SplashScreenState extends State<SplashScreen>
                     opacity: _logoOpacity.value,
                     child: Center(
                       child: Transform.translate(
-                        offset: Offset(_logoMoveX.value, _logoMoveY.value),
+                        offset:
+                        Offset(_logoMoveX.value, _logoMoveY.value),
                         child: Transform.scale(
                           scale: _logoScale.value,
                           child: Image.asset(

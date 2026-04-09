@@ -58,7 +58,7 @@ class AppRoutes {
         );
 
       case dashboard:
-        final farmId = settings.arguments as String; // or int
+        final farmId = settings.arguments as int; // or int
 
         return MaterialPageRoute(
           builder: (_) => HomePage(farmId: farmId),

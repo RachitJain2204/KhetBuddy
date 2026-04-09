@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // ✅ ADDED
 import '../../app_routes.dart';
 import '../../constants/colors.dart';
 import '../controller/farm_controller.dart';
@@ -21,7 +22,6 @@ class _SelectFarmPageState extends State<SelectFarmPage> {
   void initState() {
     super.initState();
 
-    // 🔄 Fetch farms on load
     Future.microtask(() {
       context.read<FarmController>().fetchFarms();
     });
@@ -42,7 +42,6 @@ class _SelectFarmPageState extends State<SelectFarmPage> {
             children: [
               const SizedBox(height: 10),
 
-              // Step indicator
               Container(
                 padding:
                 const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
@@ -93,20 +92,16 @@ class _SelectFarmPageState extends State<SelectFarmPage> {
 
               const SizedBox(height: 12),
 
-              // 🔄 Farm List
               Expanded(
                 child: controller.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
-                  itemCount:
-                  farms.isEmpty ? 1 : farms.length + 1,
+                  itemCount: farms.isEmpty ? 1 : farms.length + 1,
                   itemBuilder: (context, index) {
-                    // 👉 If no farms → show only Add button
                     if (farms.isEmpty) {
                       return const AddFarmCard();
                     }
 
-                    // 👉 Last item = Add Farm
                     if (index == farms.length) {
                       return const AddFarmCard();
                     }
@@ -133,22 +128,26 @@ class _SelectFarmPageState extends State<SelectFarmPage> {
                 ),
               ),
 
-              // Continue Button
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                    onPressed: selectedIndex == null
-                        ? null
-                        : () {
-                      final selectedFarm = farms[selectedIndex!];
+                  onPressed: selectedIndex == null
+                      ? null
+                      : () async {
+                    final selectedFarm = farms[selectedIndex!];
 
-                      Navigator.pushReplacementNamed(
-                        context,
-                        AppRoutes.dashboard,
-                        arguments: selectedFarm.id, // 👈 passing farmId
-                      );
-                    },
+                    // ✅ SAVE FARM ID
+                    final prefs = await SharedPreferences.getInstance();
+                    final int? farmId = prefs.getInt('selected_farm_id');
+
+                    // ✅ NAVIGATE
+                    Navigator.pushReplacementNamed(
+                      context,
+                      AppRoutes.dashboard,
+                      arguments: selectedFarm.id,
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.mainGreen,
                     shape: RoundedRectangleBorder(

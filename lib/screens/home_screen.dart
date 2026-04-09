@@ -7,7 +7,7 @@ import '../irrigation/presentation/irrigation_page.dart';
 
 class HomePage extends StatefulWidget {
   final int initialIndex;
-  final String farmId;
+  final int farmId;
 
   const HomePage({
     super.key,
