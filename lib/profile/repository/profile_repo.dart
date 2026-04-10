@@ -27,7 +27,7 @@ class ProfileRepository {
     });
 
     return await _apiService.dio.post(
-      "/farmer/details",
+      "/api/farmer/details",
       data: formData,
     );
   }

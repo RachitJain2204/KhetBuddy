@@ -46,7 +46,10 @@ class _HomePageState extends State<HomePage> {
 
     final List<Widget> _pages = [
       DashboardPage(farmId: widget.farmId,), // ✅ pass farmId
-      IrrigationPage(farmID: widget.farmId,), // optional: can pass later
+      IrrigationPlannerScreen(farmId: widget.farmId, cropName: 'Wheat', fieldUnit: 'acre',
+        
+
+      ), // optional: can pass later
       FertilizerPage(),
       const CreateProfile(),
     ];
