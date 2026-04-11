@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:khet_buddy/profile/presentation/create_profile.dart';
+import 'package:khet_buddy/profile/presentation/profile_screen.dart';
 import '../constants/colors.dart';
 import '../dashboard/presentation/dashboard_page.dart';
 import '../fertilizer/presentation/fertilizer_page.dart';
@@ -47,11 +48,9 @@ class _HomePageState extends State<HomePage> {
     final List<Widget> _pages = [
       DashboardPage(farmId: widget.farmId,), // ✅ pass farmId
       IrrigationPlannerScreen(farmId: widget.farmId, cropName: 'Wheat', fieldUnit: 'acre',
-        
-
       ), // optional: can pass later
       FertilizerPage(),
-      const CreateProfile(),
+      const ProfileScreen(),
     ];
 
     return Scaffold(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:khet_buddy/profile/controller/farmer_profile_controller.dart';
 import 'package:khet_buddy/profile/controller/profile_controller.dart';
 import 'package:provider/provider.dart';
 import 'app_routes.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => WeatherController()),
         ChangeNotifierProvider(create: (_) => FarmerController()),
         ChangeNotifierProvider(create: (_) => YieldController()),
+        ChangeNotifierProvider(create: (_) => FarmerProfileController()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
